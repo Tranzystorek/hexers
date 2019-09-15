@@ -35,11 +35,8 @@ pub struct Hexes<'a> {
 /// assert_eq!(it.next(), Some('e'));
 /// assert_eq!(it.next(), Some('f'));
 /// ```
-pub fn hexes<'a>(slice: &'a [u8]) -> Hexes<'a> {
-    Hexes::<'a> {
-        it: slice.iter(),
-        hex: None
-    }
+pub fn hexes(slice: &[u8]) -> Hexes {
+    Hexes::from_slice(slice)
 }
 
 impl HexState {
