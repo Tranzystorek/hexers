@@ -1,3 +1,4 @@
+mod aux;
 mod hexes;
 pub use hexes::{Hexes, hexes};
 
