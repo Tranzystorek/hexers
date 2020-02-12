@@ -130,7 +130,7 @@ impl<'a> Iterator for Hexes<'a> {
         self.try_next()
             .or_else(|| {
                 self.hex = self.it.next()
-                    .and_then(|byte| Some(HexedByte::from_ref(byte)));
+                    .map(HexedByte::from_ref);
 
                 self.try_next()
             })
@@ -146,7 +146,7 @@ impl<'a> DoubleEndedIterator for Hexes<'a> {
         self.try_next_back()
             .or_else(|| {
                 self.hex = self.it.next_back()
-                    .and_then(|byte| Some(HexedByte::from_ref(byte)));
+                    .map(HexedByte::from_ref);
 
                 self.try_next_back()
             })
