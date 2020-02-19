@@ -1,50 +1,33 @@
-use std::slice::Iter;
 use std::iter::FusedIterator;
 
 use crate::aux::HexedByte;
 
-/// Iterator that transforms the underlying `&[u8]` sequence
-/// into a lowercase hex encoded sequence.
-pub struct Hexes<'a> {
-    it: Iter<'a, u8>,
-    hex: Option<HexedByte<'a>>
+/// Adapter for an Iterator<Item = u8> that encodes every byte into a hex.
+pub struct Hexes<T> {
+    bytes: T,
+    hex: Option<HexedByte>
 }
 
-/// Returns an iterator over a lowercase hex encoded
-/// representation of the given byte slice.
+/// Transforms an iterator into a Hexes sequence.
 ///
 /// # Example
 ///
 /// ```
 /// use hexers::hexes;
 ///
-/// let bytes = &[0xbe_u8, 0xef_u8];
-/// let mut it = hexes(bytes);
+/// let bytes = [0xbe_u8, 0xef_u8];
+/// let mut it = hexes(bytes.iter().copied());
 ///
 /// assert_eq!(it.next(), Some('b'));
 /// assert_eq!(it.next(), Some('e'));
 /// assert_eq!(it.next(), Some('e'));
 /// assert_eq!(it.next(), Some('f'));
 /// ```
-pub fn hexes(slice: &[u8]) -> Hexes {
-    Hexes::from_slice(slice)
+pub fn hexes<T: Iterator<Item = u8>>(iter: T) -> Hexes<T> {
+    Hexes::from_iter(iter)
 }
 
-impl<'a> Hexes<'a> {
-    pub fn from_slice(slice: &'a [u8]) -> Hexes<'a> {
-        Hexes::<'a> {
-            it: slice.iter(),
-            hex: None
-        }
-    }
-
-    pub fn from_iter(it: Iter<'a, u8>) -> Hexes<'a> {
-        Hexes::<'a> {
-            it,
-            hex: None
-        }
-    }
-
+impl<T> Hexes<T> {
     fn try_next(&mut self) -> Option<char> {
         self.hex.as_mut()
             .and_then(|hexed| hexed.next()
@@ -58,36 +41,45 @@ impl<'a> Hexes<'a> {
     }
 }
 
-impl<'a> Iterator for Hexes<'a> {
+impl<T: Iterator<Item = u8>> Hexes<T> {
+    pub fn from_iter(iter: T) -> Self {
+        Hexes {
+            bytes: iter,
+            hex: None
+        }
+    }
+}
+
+impl<T: Iterator<Item = u8>> Iterator for Hexes<T> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.try_next()
             .or_else(|| {
-                self.hex = self.it.next()
-                    .map(HexedByte::from_ref);
+                self.hex = self.bytes.next()
+                    .map(HexedByte::from_byte);
 
                 self.try_next()
             })
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        (0, Some(self.it.len() * 2))
+        let (lower, greater) = self.bytes.size_hint();
+
+        (lower * 2, greater.map(|val| val * 2))
     }
 }
 
-impl<'a> DoubleEndedIterator for Hexes<'a> {
+impl<T: DoubleEndedIterator<Item = u8>> DoubleEndedIterator for Hexes<T> {
     fn next_back(&mut self) -> Option<Self::Item> {
         self.try_next_back()
             .or_else(|| {
-                self.hex = self.it.next_back()
-                    .map(HexedByte::from_ref);
+                self.hex = self.bytes.next_back()
+                    .map(HexedByte::from_byte);
 
                 self.try_next_back()
             })
     }
 }
 
-impl<'a> ExactSizeIterator for Hexes<'a> {}
-
-impl<'a> FusedIterator for Hexes<'a> {}
+impl<T: FusedIterator<Item = u8>> FusedIterator for Hexes<T> {}

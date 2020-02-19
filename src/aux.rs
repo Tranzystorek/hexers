@@ -4,8 +4,8 @@ enum HexState {
     RightRead
 }
 
-pub struct HexedByte<'a> {
-    byte: &'a u8,
+pub struct HexedByte {
+    byte: u8,
     state: HexState
 }
 
@@ -18,9 +18,9 @@ impl HexState {
     }
 }
 
-impl<'a> HexedByte<'a> {
-    pub fn from_ref(byte: &'a u8) -> HexedByte<'a> {
-        HexedByte::<'a> {
+impl HexedByte {
+    pub fn from_byte(byte: u8) -> HexedByte {
+        HexedByte {
             byte,
             state: HexState::Unread
         }
@@ -35,7 +35,7 @@ impl<'a> HexedByte<'a> {
     }
 }
 
-impl<'a> Iterator for HexedByte<'a> {
+impl Iterator for HexedByte {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -51,7 +51,7 @@ impl<'a> Iterator for HexedByte<'a> {
     }
 }
 
-impl<'a> DoubleEndedIterator for HexedByte<'a> {
+impl DoubleEndedIterator for HexedByte {
     fn next_back(&mut self) -> Option<Self::Item> {
         let result = match self.state {
             HexState::Unread => Some(self.get_right()),
