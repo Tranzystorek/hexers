@@ -2,29 +2,10 @@ use std::iter::FusedIterator;
 
 use crate::aux::HexedByte;
 
-/// Adapter for an Iterator<Item = u8> that encodes every byte into a hex.
+/// Adaptor for an Iterator<Item = u8> that encodes every byte into hex chars.
 pub struct Hexes<T> {
     bytes: T,
     hex: Option<HexedByte>
-}
-
-/// Transforms an iterator into a Hexes sequence.
-///
-/// # Example
-///
-/// ```
-/// use hexers::hexes;
-///
-/// let bytes = [0xbe_u8, 0xef_u8];
-/// let mut it = hexes(bytes.iter().copied());
-///
-/// assert_eq!(it.next(), Some('b'));
-/// assert_eq!(it.next(), Some('e'));
-/// assert_eq!(it.next(), Some('e'));
-/// assert_eq!(it.next(), Some('f'));
-/// ```
-pub fn hexes<T: Iterator<Item = u8>>(iter: T) -> Hexes<T> {
-    Hexes::from_iter(iter)
 }
 
 impl<T> Hexes<T> {
@@ -83,3 +64,29 @@ impl<T: DoubleEndedIterator<Item = u8>> DoubleEndedIterator for Hexes<T> {
 }
 
 impl<T: FusedIterator<Item = u8>> FusedIterator for Hexes<T> {}
+
+/// An Iterator blanket that provides the adaptor to hex sequences of bytes.
+pub trait HexIterator : Iterator {
+    /// Creates an iterator over hex encoded bytes in the original sequence.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use hexers::HexIterator;
+    ///
+    /// let bytes = [0xbe_u8, 0xef_u8];
+    /// let mut it = bytes.iter().copied().hexed();
+    ///
+    /// assert_eq!(it.next(), Some('b'));
+    /// assert_eq!(it.next(), Some('e'));
+    /// assert_eq!(it.next(), Some('e'));
+    /// assert_eq!(it.next(), Some('f'));
+    /// ```
+    fn hexed(self) -> Hexes<Self>
+        where Self: Sized + Iterator<Item = u8>
+    {
+        Hexes::from_iter(self)
+    }
+}
+
+impl<T> HexIterator for T where T: Iterator<Item = u8> {}
