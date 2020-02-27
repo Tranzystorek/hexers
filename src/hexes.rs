@@ -11,14 +11,14 @@ pub struct Hexes<T> {
 impl<T> Hexes<T> {
     fn try_next(&mut self) -> Option<char> {
         self.hex.as_mut()
-            .and_then(|hexed| hexed.next()
-                .and_then(|hex| std::char::from_digit(hex as u32, 16)))
+            .and_then(|hexed| hexed.next())
+            .and_then(|hex| std::char::from_digit(hex as u32, 16))
     }
 
     fn try_next_back(&mut self) -> Option<char> {
         self.hex.as_mut()
-            .and_then(|hexed| hexed.next_back()
-                .and_then(|hex| std::char::from_digit(hex as u32, 16)))
+            .and_then(|hexed| hexed.next_back())
+            .and_then(|hex| std::char::from_digit(hex as u32, 16))
     }
 }
 
