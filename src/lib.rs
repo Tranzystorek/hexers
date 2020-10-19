@@ -1,6 +1,6 @@
 mod aux;
 mod hexes;
-pub use hexes::{Hexes, HexIterator};
+pub use hexes::{HexIterator, Hexes};
 
 #[cfg(test)]
 mod tests {

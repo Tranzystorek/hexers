@@ -1,19 +1,19 @@
 enum HexState {
     Unread,
     LeftRead,
-    RightRead
+    RightRead,
 }
 
 pub struct HexedByte {
     byte: u8,
-    state: HexState
+    state: HexState,
 }
 
 impl HexState {
     pub fn advance(&mut self) {
         *self = match self {
             HexState::Unread => HexState::LeftRead,
-            _ => HexState::RightRead
+            _ => HexState::RightRead,
         }
     }
 }
@@ -22,7 +22,7 @@ impl HexedByte {
     pub fn from_byte(byte: u8) -> HexedByte {
         HexedByte {
             byte,
-            state: HexState::Unread
+            state: HexState::Unread,
         }
     }
 
@@ -42,7 +42,7 @@ impl Iterator for HexedByte {
         let result = match self.state {
             HexState::Unread => Some(self.get_left()),
             HexState::LeftRead => Some(self.get_right()),
-            HexState::RightRead => None
+            HexState::RightRead => None,
         };
 
         self.state.advance();
@@ -56,7 +56,7 @@ impl DoubleEndedIterator for HexedByte {
         let result = match self.state {
             HexState::Unread => Some(self.get_right()),
             HexState::LeftRead => Some(self.get_left()),
-            HexState::RightRead => None
+            HexState::RightRead => None,
         };
 
         self.state.advance();
