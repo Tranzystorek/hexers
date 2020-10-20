@@ -8,7 +8,7 @@ mod tests {
 
     #[test]
     fn hexes_iterates_over_an_array() {
-        let data = [0xbe_u8, 0xef_u8];
+        let data = [0xbe, 0xef];
         let it = data.iter().copied().hexed();
 
         let collected: String = it.collect();
@@ -17,7 +17,7 @@ mod tests {
 
     #[test]
     fn hexes_reverse_iterates_over_an_array() {
-        let data = [0xbe_u8, 0xef_u8];
+        let data = [0xbe, 0xef];
         let it = data.iter().copied().hexed().rev();
 
         let collected: String = it.collect();
