@@ -15,28 +15,27 @@ pub struct Hexes<T> {
 
 impl<T> Hexes<T> {
     fn try_next(&mut self) -> Option<char> {
-        self.front
-            .as_mut()
-            .and_then(Iterator::next)
-            .and_then(to_hex)
+        Self::get_next(&mut self.front)
     }
 
     fn try_next_last(&mut self) -> Option<char> {
-        self.back.as_mut().and_then(Iterator::next).and_then(to_hex)
+        Self::get_next(&mut self.back)
     }
 
     fn try_next_back(&mut self) -> Option<char> {
-        self.back
-            .as_mut()
-            .and_then(DoubleEndedIterator::next_back)
-            .and_then(to_hex)
+        Self::get_next_back(&mut self.back)
     }
 
     fn try_next_back_last(&mut self) -> Option<char> {
-        self.front
-            .as_mut()
-            .and_then(DoubleEndedIterator::next_back)
-            .and_then(to_hex)
+        Self::get_next_back(&mut self.front)
+    }
+
+    fn get_next(opt: &mut Option<NibbleState>) -> Option<char> {
+        opt.as_mut().and_then(|st| st.next()).and_then(to_hex)
+    }
+
+    fn get_next_back(opt: &mut Option<NibbleState>) -> Option<char> {
+        opt.as_mut().and_then(|st| st.next_back()).and_then(to_hex)
     }
 }
 
