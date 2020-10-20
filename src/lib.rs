@@ -11,8 +11,8 @@ mod tests {
         let data = [0xbe, 0xef];
         let it = data.iter().copied().hexed();
 
-        let collected: String = it.collect();
-        assert_eq!(collected.as_str(), "beef");
+        let expected = "beef".chars();
+        itertools::assert_equal(expected, it);
     }
 
     #[test]
@@ -20,8 +20,8 @@ mod tests {
         let data = [0xbe, 0xef];
         let it = data.iter().copied().hexed().rev();
 
-        let collected: String = it.collect();
-        assert_eq!(collected.as_str(), "feeb");
+        let expected = "feeb".chars();
+        itertools::assert_equal(expected, it);
     }
 
     #[test]
@@ -29,8 +29,8 @@ mod tests {
         let range = 10..16;
         let it = range.hexed();
 
-        let collected: String = it.collect();
-        assert_eq!(collected.as_str(), "0a0b0c0d0e0f");
+        let expected = "0a0b0c0d0e0f".chars();
+        itertools::assert_equal(expected, it);
     }
 
     #[test]
@@ -38,8 +38,8 @@ mod tests {
         let data = b"beef";
         let it = data.iter().copied().hexed();
 
-        let collected: String = it.collect();
-        assert_eq!(collected.as_str(), "62656566");
+        let expected = "62656566".chars();
+        itertools::assert_equal(expected, it);
     }
 
     #[test]
@@ -49,9 +49,10 @@ mod tests {
 
         let front = it.by_ref().take(3);
         let expected = "dea".chars();
-        assert!(front.eq(expected));
+        itertools::assert_equal(expected, front);
 
+        let back = it.rev();
         let expected_back = "feebd".chars();
-        assert!(it.rev().eq(expected_back));
+        itertools::assert_equal(expected_back, back);
     }
 }
