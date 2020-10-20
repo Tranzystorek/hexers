@@ -41,4 +41,17 @@ mod tests {
         let collected: String = it.collect();
         assert_eq!(collected.as_str(), "62656566");
     }
+
+    #[test]
+    fn hexes_can_be_consumed_from_both_ends() {
+        let data = [0xde, 0xad, 0xbe, 0xef];
+        let mut it = data.iter().copied().hexed();
+
+        let front = it.by_ref().take(3);
+        let expected = "dea".chars();
+        assert!(front.eq(expected));
+
+        let expected_back = "feebd".chars();
+        assert!(it.rev().eq(expected_back));
+    }
 }

@@ -1,34 +1,51 @@
 use std::iter::FusedIterator;
 
-use crate::aux::HexedByte;
+use crate::aux::NibbleState;
+
+fn to_hex(n: u8) -> Option<char> {
+    std::char::from_digit(n as u32, 16)
+}
 
 /// Adaptor for an Iterator<Item = u8> that encodes every byte into hex chars.
 pub struct Hexes<T> {
     bytes: T,
-    hex: Option<HexedByte>,
+    front: Option<NibbleState>,
+    back: Option<NibbleState>,
 }
 
 impl<T> Hexes<T> {
     fn try_next(&mut self) -> Option<char> {
-        self.hex
+        self.front
             .as_mut()
-            .and_then(|hexed| hexed.next())
-            .and_then(|hex| std::char::from_digit(hex as u32, 16))
+            .and_then(Iterator::next)
+            .and_then(to_hex)
+    }
+
+    fn try_next_last(&mut self) -> Option<char> {
+        self.back.as_mut().and_then(Iterator::next).and_then(to_hex)
     }
 
     fn try_next_back(&mut self) -> Option<char> {
-        self.hex
+        self.back
             .as_mut()
-            .and_then(|hexed| hexed.next_back())
-            .and_then(|hex| std::char::from_digit(hex as u32, 16))
+            .and_then(DoubleEndedIterator::next_back)
+            .and_then(to_hex)
+    }
+
+    fn try_next_back_last(&mut self) -> Option<char> {
+        self.front
+            .as_mut()
+            .and_then(DoubleEndedIterator::next_back)
+            .and_then(to_hex)
     }
 }
 
 impl<T: Iterator<Item = u8>> Hexes<T> {
     pub fn from(iter: T) -> Self {
-        Hexes {
+        Self {
             bytes: iter,
-            hex: None,
+            front: None,
+            back: None,
         }
     }
 }
@@ -37,10 +54,12 @@ impl<T: Iterator<Item = u8>> Iterator for Hexes<T> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.try_next().or_else(|| {
-            self.hex = self.bytes.next().map(HexedByte::from_byte);
-            self.try_next()
-        })
+        self.try_next()
+            .or_else(|| {
+                self.front = self.bytes.next().map(NibbleState::from_byte);
+                self.try_next()
+            })
+            .or_else(|| self.try_next_last())
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
@@ -52,10 +71,12 @@ impl<T: Iterator<Item = u8>> Iterator for Hexes<T> {
 
 impl<T: DoubleEndedIterator<Item = u8>> DoubleEndedIterator for Hexes<T> {
     fn next_back(&mut self) -> Option<Self::Item> {
-        self.try_next_back().or_else(|| {
-            self.hex = self.bytes.next_back().map(HexedByte::from_byte);
-            self.try_next_back()
-        })
+        self.try_next_back()
+            .or_else(|| {
+                self.back = self.bytes.next_back().map(NibbleState::from_byte);
+                self.try_next_back()
+            })
+            .or_else(|| self.try_next_back_last())
     }
 }
 

@@ -1,66 +1,54 @@
-enum HexState {
-    Unread,
-    LeftRead,
-    RightRead,
+pub enum NibbleState {
+    Both(u8),
+    Lo(u8),
+    Hi(u8),
+    Empty,
 }
 
-pub struct HexedByte {
-    byte: u8,
-    state: HexState,
-}
-
-impl HexState {
-    pub fn advance(&mut self) {
-        *self = match self {
-            HexState::Unread => HexState::LeftRead,
-            _ => HexState::RightRead,
-        }
+impl NibbleState {
+    pub fn from_byte(byte: u8) -> Self {
+        NibbleState::Both(byte)
     }
 }
 
-impl HexedByte {
-    pub fn from_byte(byte: u8) -> HexedByte {
-        HexedByte {
-            byte,
-            state: HexState::Unread,
-        }
-    }
-
-    fn get_left(&self) -> u8 {
-        self.byte >> 4
-    }
-
-    fn get_right(&self) -> u8 {
-        self.byte & 0xf
-    }
-}
-
-impl Iterator for HexedByte {
+impl Iterator for NibbleState {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let result = match self.state {
-            HexState::Unread => Some(self.get_left()),
-            HexState::LeftRead => Some(self.get_right()),
-            HexState::RightRead => None,
-        };
-
-        self.state.advance();
-
-        result
+        match *self {
+            NibbleState::Both(b) => {
+                *self = NibbleState::Lo(b);
+                Some(b >> 4)
+            }
+            NibbleState::Lo(b) => {
+                *self = NibbleState::Empty;
+                Some(b & 0xf)
+            }
+            NibbleState::Hi(b) => {
+                *self = NibbleState::Empty;
+                Some(b >> 4)
+            }
+            _ => None,
+        }
     }
 }
 
-impl DoubleEndedIterator for HexedByte {
+impl DoubleEndedIterator for NibbleState {
     fn next_back(&mut self) -> Option<Self::Item> {
-        let result = match self.state {
-            HexState::Unread => Some(self.get_right()),
-            HexState::LeftRead => Some(self.get_left()),
-            HexState::RightRead => None,
-        };
-
-        self.state.advance();
-
-        result
+        match *self {
+            NibbleState::Both(b) => {
+                *self = NibbleState::Hi(b);
+                Some(b & 0xf)
+            }
+            NibbleState::Hi(b) => {
+                *self = NibbleState::Empty;
+                Some(b >> 4)
+            }
+            NibbleState::Lo(b) => {
+                *self = NibbleState::Empty;
+                Some(b & 0xf)
+            }
+            _ => None,
+        }
     }
 }
