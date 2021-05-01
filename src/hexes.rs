@@ -19,6 +19,14 @@ impl<T: Iterator<Item = u8>> Hexes<T> {
     }
 }
 
+impl<T: Clone> Clone for Hexes<T> {
+    fn clone(&self) -> Self {
+        Self {
+            nibbles: self.nibbles.clone(),
+        }
+    }
+}
+
 impl<T: Iterator<Item = u8>> Iterator for Hexes<T> {
     type Item = char;
 

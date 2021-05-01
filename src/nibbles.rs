@@ -44,6 +44,16 @@ impl<T: Iterator<Item = u8>> Nibbles<T> {
     }
 }
 
+impl<T: Clone> Clone for Nibbles<T> {
+    fn clone(&self) -> Self {
+        Self {
+            bytes: self.bytes.clone(),
+            front: self.front.clone(),
+            back: self.back.clone(),
+        }
+    }
+}
+
 impl<T: Iterator<Item = u8>> Iterator for Nibbles<T> {
     type Item = u8;
 
