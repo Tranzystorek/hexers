@@ -1,4 +1,3 @@
-mod aux;
 mod hexes;
 mod nibbles;
 
