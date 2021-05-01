@@ -46,7 +46,7 @@ where
     Nibbles::from(iterable.into_iter())
 }
 
-/// An Iterator blanket that provides the adaptor to hex sequences of bytes.
+/// An [`Iterator`] blanket that provides the adaptor to hex sequences of bytes.
 pub trait HexIterator: Iterator {
     /// Creates an iterator over nibbles in the original sequence (high-to-low order).
     ///

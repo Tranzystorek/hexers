@@ -6,7 +6,7 @@ fn to_hex(n: u8) -> Option<char> {
     std::char::from_digit(n as u32, 16)
 }
 
-/// Adaptor for an Iterator<Item = u8> that encodes every byte into hex chars.
+/// Adaptor for an `Iterator<Item = u8>` that encodes every byte into hex chars.
 pub struct Hexes<T> {
     nibbles: Nibbles<T>,
 }

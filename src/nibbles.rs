@@ -1,7 +1,7 @@
 use std::array::IntoIter as ArrayIter;
 use std::iter::FusedIterator;
 
-/// Adaptor for an Iterator<Item = u8> that encodes every byte into its nibbles (high-to-low order).
+/// Adaptor for an `Iterator<Item = u8>` that encodes every byte into its nibbles (high-to-low order).
 pub struct Nibbles<T> {
     bytes: T,
     front: Option<ArrayIter<u8, 2>>,
