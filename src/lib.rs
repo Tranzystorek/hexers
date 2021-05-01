@@ -6,6 +6,45 @@ mod tests;
 
 pub use hexes::Hexes;
 pub use nibbles::Nibbles;
+/// [`IntoIterator`] enabled version of [`HexIterator::hexed`].
+///
+/// # Example
+///
+/// ```
+/// use hexers::hexed;
+///
+/// let bytes = vec![0xbe, 0xef];
+///
+/// for hex in hexed(bytes) {
+///     let _: char = hex;
+/// }
+/// ```
+pub fn hexed<I>(iterable: I) -> Hexes<I::IntoIter>
+where
+    I: IntoIterator<Item = u8>,
+{
+    Hexes::from(iterable.into_iter())
+}
+
+/// [`IntoIterator`] enabled version of [`HexIterator::nibbles`].
+///
+/// # Example
+///
+/// ```
+/// use hexers::nibbles;
+///
+/// let bytes = vec![0xbe, 0xef];
+///
+/// for nib in nibbles(bytes) {
+///     let _: u8 = nib;
+/// }
+/// ```
+pub fn nibbles<I>(iterable: I) -> Nibbles<I::IntoIter>
+where
+    I: IntoIterator<Item = u8>,
+{
+    Nibbles::from(iterable.into_iter())
+}
 
 /// An Iterator blanket that provides the adaptor to hex sequences of bytes.
 pub trait HexIterator: Iterator {
