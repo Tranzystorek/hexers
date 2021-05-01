@@ -1,4 +1,4 @@
-use crate::HexIterator;
+use crate::Hexers;
 
 #[test]
 fn hexed_iterates_over_an_array() {

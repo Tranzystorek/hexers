@@ -6,7 +6,7 @@ sequence to a hex encoded one via an iterator adaptor.
 ## Example
 
 ```rust
-use hexers::HexIterator;
+use hexers::Hexers;
 
 let bytes = [0xbe_u8, 0xef_u8];
 let mut it = bytes.iter().copied().hexed();

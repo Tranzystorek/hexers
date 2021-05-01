@@ -6,7 +6,7 @@ mod tests;
 
 pub use hexed::Hexed;
 pub use nibbles::Nibbles;
-/// [`IntoIterator`] enabled version of [`HexIterator::hexed`].
+/// [`IntoIterator`] enabled version of [`Hexers::hexed`].
 ///
 /// # Example
 ///
@@ -26,7 +26,7 @@ where
     Hexed::from(iterable.into_iter())
 }
 
-/// [`IntoIterator`] enabled version of [`HexIterator::nibbles`].
+/// [`IntoIterator`] enabled version of [`Hexers::nibbles`].
 ///
 /// # Example
 ///
@@ -47,13 +47,13 @@ where
 }
 
 /// An [`Iterator`] blanket that provides the adaptor to hex sequences of bytes.
-pub trait HexIterator: Iterator {
+pub trait Hexers: Iterator {
     /// Creates an iterator over nibbles in the original sequence (high-to-low order).
     ///
     /// # Example
     ///
     /// ```
-    /// use hexers::HexIterator;
+    /// use hexers::Hexers;
     ///
     /// let bytes = [0xbe, 0xef];
     /// let mut it = bytes.iter().copied().nibbles();
@@ -75,7 +75,7 @@ pub trait HexIterator: Iterator {
     /// # Example
     ///
     /// ```
-    /// use hexers::HexIterator;
+    /// use hexers::Hexers;
     ///
     /// let bytes = [0xbe, 0xef];
     /// let mut it = bytes.iter().copied().hexed();
@@ -93,4 +93,4 @@ pub trait HexIterator: Iterator {
     }
 }
 
-impl<T> HexIterator for T where T: Iterator<Item = u8> {}
+impl<T> Hexers for T where T: Iterator<Item = u8> {}
