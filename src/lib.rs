@@ -1,10 +1,10 @@
-mod hexes;
+mod hexed;
 mod nibbles;
 
 #[cfg(test)]
 mod tests;
 
-pub use hexes::Hexes;
+pub use hexed::Hexed;
 pub use nibbles::Nibbles;
 /// [`IntoIterator`] enabled version of [`HexIterator::hexed`].
 ///
@@ -19,11 +19,11 @@ pub use nibbles::Nibbles;
 ///     let _: char = hex;
 /// }
 /// ```
-pub fn hexed<I>(iterable: I) -> Hexes<I::IntoIter>
+pub fn hexed<I>(iterable: I) -> Hexed<I::IntoIter>
 where
     I: IntoIterator<Item = u8>,
 {
-    Hexes::from(iterable.into_iter())
+    Hexed::from(iterable.into_iter())
 }
 
 /// [`IntoIterator`] enabled version of [`HexIterator::nibbles`].
@@ -85,11 +85,11 @@ pub trait HexIterator: Iterator {
     /// assert_eq!(it.next(), Some('e'));
     /// assert_eq!(it.next(), Some('f'));
     /// ```
-    fn hexed(self) -> Hexes<Self>
+    fn hexed(self) -> Hexed<Self>
     where
         Self: Sized + Iterator<Item = u8>,
     {
-        Hexes::from(self)
+        Hexed::from(self)
     }
 }
 

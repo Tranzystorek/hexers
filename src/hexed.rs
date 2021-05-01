@@ -7,11 +7,11 @@ fn to_hex(n: u8) -> Option<char> {
 }
 
 /// Adaptor for an `Iterator<Item = u8>` that encodes every byte into hex chars.
-pub struct Hexes<T> {
+pub struct Hexed<T> {
     nibbles: Nibbles<T>,
 }
 
-impl<T: Iterator<Item = u8>> Hexes<T> {
+impl<T: Iterator<Item = u8>> Hexed<T> {
     pub fn from(iter: T) -> Self {
         Self {
             nibbles: Nibbles::from(iter),
@@ -19,7 +19,7 @@ impl<T: Iterator<Item = u8>> Hexes<T> {
     }
 }
 
-impl<T: Clone> Clone for Hexes<T> {
+impl<T: Clone> Clone for Hexed<T> {
     fn clone(&self) -> Self {
         Self {
             nibbles: self.nibbles.clone(),
@@ -27,7 +27,7 @@ impl<T: Clone> Clone for Hexes<T> {
     }
 }
 
-impl<T: Iterator<Item = u8>> Iterator for Hexes<T> {
+impl<T: Iterator<Item = u8>> Iterator for Hexed<T> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -35,10 +35,10 @@ impl<T: Iterator<Item = u8>> Iterator for Hexes<T> {
     }
 }
 
-impl<T: DoubleEndedIterator<Item = u8>> DoubleEndedIterator for Hexes<T> {
+impl<T: DoubleEndedIterator<Item = u8>> DoubleEndedIterator for Hexed<T> {
     fn next_back(&mut self) -> Option<Self::Item> {
         self.nibbles.next_back().and_then(to_hex)
     }
 }
 
-impl<T: FusedIterator<Item = u8>> FusedIterator for Hexes<T> {}
+impl<T: FusedIterator<Item = u8>> FusedIterator for Hexed<T> {}

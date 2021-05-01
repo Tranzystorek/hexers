@@ -1,7 +1,7 @@
 use crate::HexIterator;
 
 #[test]
-fn hexes_iterates_over_an_array() {
+fn hexed_iterates_over_an_array() {
     let data = [0xbe, 0xef];
     let it = data.iter().copied().hexed();
 
@@ -10,7 +10,7 @@ fn hexes_iterates_over_an_array() {
 }
 
 #[test]
-fn hexes_reverse_iterates_over_an_array() {
+fn hexed_reverse_iterates_over_an_array() {
     let data = [0xbe, 0xef];
     let it = data.iter().copied().hexed().rev();
 
@@ -19,7 +19,7 @@ fn hexes_reverse_iterates_over_an_array() {
 }
 
 #[test]
-fn hexes_transforms_ranges() {
+fn hexed_transforms_ranges() {
     let range = 10..16;
     let it = range.hexed();
 
@@ -28,7 +28,7 @@ fn hexes_transforms_ranges() {
 }
 
 #[test]
-fn hexes_works_for_converted_strings() {
+fn hexed_works_for_converted_strings() {
     let data = b"beef";
     let it = data.iter().copied().hexed();
 
@@ -37,7 +37,7 @@ fn hexes_works_for_converted_strings() {
 }
 
 #[test]
-fn hexes_can_be_consumed_from_both_ends() {
+fn hexed_can_be_consumed_from_both_ends() {
     let data = [0xde, 0xad, 0xbe, 0xef];
     let mut it = data.iter().copied().hexed();
 
